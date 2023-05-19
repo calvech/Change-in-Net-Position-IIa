@@ -1,0 +1,40 @@
+Exhibit IIa = 
+VAR IIaRevenues = 
+CALCULATETABLE(
+    SELECTCOLUMNS(
+        FY24_BUDGET,
+        "Header","Revenues",
+        "Fiscal Year", FY24_BUDGET[Fiscal Year],
+        "GL Accounts", FY24_BUDGET[GL Accounts],
+        "Amount", -FY24_BUDGET[Amount]),
+        MID(FY24_BUDGET[GL Accounts],12,1)="4",
+        FY24_BUDGET[Amount]<>0
+)
+
+VAR IIaExpenses = 
+CALCULATETABLE(
+    SELECTCOLUMNS(
+        FY24_BUDGET,
+        "Header","Expenses",
+        "Fiscal Year", FY24_BUDGET[Fiscal Year],
+        "GL Accounts", FY24_BUDGET[GL Accounts],
+        "Amount", FY24_BUDGET[Amount]),
+        MID(FY24_BUDGET[GL Accounts],12,1)<>"4",
+        FY24_BUDGET[Amount]<>0
+)
+
+VAR IIaNetSurplus =
+CALCULATETABLE(
+SELECTCOLUMNS(
+    FY24_BUDGET,
+    "Header", "Change in Net Position",
+    "Fiscal Year", FY24_BUDGET[Fiscal Year],
+    "GL Accounts", LEFT(FY24_BUDGET[GL Accounts],11)&"N_SU",
+    "Amount", -FY24_BUDGET[Amount]),
+    FY24_BUDGET[Amount]<>0
+)
+
+VAR IIaTable = 
+UNION(IIaRevenues,IIaExpenses,IIaNetSurplus)
+
+RETURN IIaTable
